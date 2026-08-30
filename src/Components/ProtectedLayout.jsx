@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "./Header";
 
 const ProtectedLayout = () => {
   const token = localStorage.getItem("token");
