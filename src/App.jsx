@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
-import Spinner from "./Components/Spinner";
+import Spinner from "./components/Spinner";
 
 const Login = lazy(() => import("./pages/Admin/Login"));
 const Register = lazy(() => import("./pages/Admin/Register"));
@@ -9,8 +9,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Leads = lazy(() => import("./pages/Leads"));
 const CreateLead = lazy(() => import("./pages/CreateLead"));
 const LeadDetail = lazy(() => import("./pages/LeadDetail"));
-const ProtectedLayout = lazy(() => import("./Components/ProtectedLayout"));
-const PublicLayout = lazy(() => import("./Components/PublicLayout"));
+const ProtectedLayout = lazy(() => import("./components/ProtectedLayout"));
+const PublicLayout = lazy(() => import("./components/PublicLayout"));
 const PageNotFound = lazy(() => import("./pages/404/PageNotFound"));
 
 function App() {
