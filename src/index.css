@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@import "tailwindcss";
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  margin: 0 auto;
+  z-index: 9999;
+
+  /* Professional overlay */
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.blue-spinner {
+  width: 44px;
+  height: 44px;
+
+  /* Professional indigo/blue */
+  border: 4px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #4f46e5;
+  border-right-color: #6366f1;
+
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+
+  /* Subtle glow */
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.35);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-text {
+  color: #dc2626;
+}
+
+.error-text {
+  color: #dc2626;
+}
