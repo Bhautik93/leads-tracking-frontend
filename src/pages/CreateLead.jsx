@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Phone, User, CircleDot } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import configuration from "../config";
 import Input from "../components/Input";
 import Label from "../components/Label";
@@ -9,6 +9,9 @@ import { toast } from "sonner";
 
 const CreateLead = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const stateItem = location.state;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,8 +19,37 @@ const CreateLead = () => {
     phone: "",
     status: "",
   });
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const editId = stateItem?.leadId;
+
+  useEffect(() => {
+    if (editId) {
+      fetchLeadDetails(stateItem.leadId);
+    }
+  }, [editId, stateItem]);
+
+  const fetchLeadDetails = async (id) => {
+    configuration
+      .getAPIaxios({
+        url: `api/leads/${id}`,
+      })
+      .then((data) => {
+        if (data) {
+          setFormData({
+            name: data.name || "",
+            email: data.email || "",
+            phone: data.phone || "",
+            status: data.status || "",
+          });
+        }
+      })
+      .catch((error) => {
+        return toast.error(error.message);
+      });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,42 +95,71 @@ const CreateLead = () => {
     return isValid;
   };
 
-  const handleSubmit = async () => {
-    if (validateForm()) {
-      setIsLoading(true);
-      configuration
-        .postAPI({ url: "api/leads", params: formData })
-        .then(async (data) => {
-          if (data.payload) {
-            toast?.success("Record added successfully");
-            setIsLoading(false);
-            navigate("/leads");
-          } else if (data.error) {
-            setIsLoading(false);
-            return toast.error(data.error.message);
-          } else {
-            return toast.error("Something went wrong");
-          }
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          return toast.error(error.message);
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      let data;
+
+      if (editId) {
+        data = await configuration.allAPI({
+          url: `api/leads/${editId}`,
+          params: formData,
+          method: "PATCH",
         });
+      } else {
+        data = await configuration.postAPI({
+          url: "api/leads",
+          params: formData,
+        });
+      }
+
+      if (data?.payload) {
+        toast.success(
+          editId
+            ? "Lead updated successfully"
+            : "Record added successfully",
+        );
+
+        navigate("/leads");
+      } else if (data?.error) {
+        toast.error(data.error.message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong",
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Add Lead</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {editId ? "Edit Lead" : "Add Lead"}
+        </h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Create a new lead and add it to your lead management system.
+          {editId
+            ? "Update the lead information in your lead management system."
+            : "Create a new lead and add it to your lead management system."}
         </p>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="#" method="POST" className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label
               text="Name"
@@ -218,7 +279,16 @@ const CreateLead = () => {
             />
 
             <Button
-              text={isLoading ? "Creating..." : "Create Lead"}
+              type="submit"
+              text={
+                isLoading
+                  ? editId
+                    ? "Updating..."
+                    : "Creating..."
+                  : editId
+                    ? "Update Lead"
+                    : "Create Lead"
+              }
               disabled={isLoading}
               className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm text-white hover:bg-blue-700 cursor-pointer"
               onClick={() => handleSubmit()}

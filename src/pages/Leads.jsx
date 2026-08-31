@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../components/Table";
 import Button from "../components/Button";
-import { Plus } from "lucide-react";
+import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import configuration from "../config";
 import { toast } from "sonner";
@@ -85,19 +85,32 @@ const Leads = () => {
       searchable: false,
       cell: (row) => (
         <div className="flex items-center gap-4">
-          <Button
-            text="View"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer"
+          <Eye
+            size={18}
+            title="View"
+            className="cursor-pointer text-gray-500 transition hover:text-blue-600"
             onClick={() =>
-              navigate(`/leads/details`, {
+              navigate("/leads/details", {
                 state: { leadId: row.id },
               })
             }
           />
 
-          <Button
-            text="Delete"
-            className="text-sm font-medium text-red-600 hover:text-red-700 cursor-pointer"
+          <Pencil
+            size={18}
+            title="Edit"
+            className="cursor-pointer text-gray-500 transition hover:text-blue-600"
+            onClick={() =>
+              navigate("/leads/new", {
+                state: { leadId: row.id },
+              })
+            }
+          />
+
+          <Trash2
+            size={18}
+            title="Delete"
+            className="cursor-pointer text-gray-500 transition hover:text-red-600"
             onClick={() => handleDeleteClick(row)}
           />
         </div>
